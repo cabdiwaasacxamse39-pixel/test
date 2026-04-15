@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="so">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xisaabiye Weyn - Madow & Huruud</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #111827; /* Asalka guud oo madow ah */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        /* Weelka Xisaabiyaha */
+        .calculator-container {
+            width: 100%;
+            max-width: 420px;
+            background-color: #1f2937; /* Madow khafif ah */
+            padding: 1.5rem;
+            border-radius: 2.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border: 1px solid #374151;
+        }
+        .calculator-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+        /* Shaashadda Natiijada */
+        .display {
+            grid-column: span 4;
+            background-color: #000000; /* Madow saafi ah */
+            color: #ffffff; /* Cadaan */
+            text-align: right;
+            padding: 35px;
+            font-size: 3.5rem;
+            border-radius: 1.5rem;
+            margin-bottom: 25px;
+            min-height: 130px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-end;
+            word-break: break-all;
+            box-shadow: inset 0 2px 10px rgba(255,255,255,0.05);
+        }
+        /* Badhamada */
+        button {
+            height: 75px;
+            font-size: 1.6rem;
+            font-weight: 600;
+            border-radius: 1.25rem;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            border: none;
+            outline: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        button:active {
+            transform: scale(0.92);
+        }
+        /* Midabka Nambarada (Cadaan/Madow) */
+        .btn-number {
+            background-color: #ffffff;
+            color: #111827;
+        }
+        .btn-number:hover {
+            background-color: #e5e7eb;
+        }
+        /* Midabka Hawlgallada (Huruud) */
+        .btn-operator {
+            background-color: #fbbf24; /* Huruud */
+            color: #000000;
+        }
+        .btn-operator:hover {
+            background-color: #f59e0b;
+        }
+        /* Badhanka Natiijada */
+        .btn-equal {
+            background-color: #facc15;
+            color: #000000;
+            grid-column: span 2;
+        }
+        .btn-equal:hover {
+            background-color: #eab308;
+        }
+        /* Badhanka Clear-ka */
+        .btn-clear {
+            background-color: #4b5563;
+            color: #ffffff;
+        }
+        .btn-clear:hover {
+            background-color: #374151;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="calculator-container">
+        <!-- Shaashadda -->
+        <div id="display" class="display">0</div>
+
+        <!-- Badhamada -->
+        <div class="calculator-grid">
+            <button class="btn-clear" onclick="clearDisplay()">AC</button>
+            <button class="btn-operator" onclick="appendOperator('/')">÷</button>
+            <button class="btn-operator" onclick="appendOperator('*')">×</button>
+            <button class="btn-operator" onclick="deleteLast()">⌫</button>
+
+            <button class="btn-number" onclick="appendNumber('7')">7</button>
+            <button class="btn-number" onclick="appendNumber('8')">8</button>
+            <button class="btn-number" onclick="appendNumber('9')">9</button>
+            <button class="btn-operator" onclick="appendOperator('-')">−</button>
+
+            <button class="btn-number" onclick="appendNumber('4')">4</button>
+            <button class="btn-number" onclick="appendNumber('5')">5</button>
+            <button class="btn-number" onclick="appendNumber('6')">6</button>
+            <button class="btn-operator" onclick="appendOperator('+')">+</button>
+
+            <button class="btn-number" onclick="appendNumber('1')">1</button>
+            <button class="btn-number" onclick="appendNumber('2')">2</button>
+            <button class="btn-number" onclick="appendNumber('3')">3</button>
+            <button class="btn-number" onclick="appendNumber('.')">.</button>
+
+            <button class="btn-number" onclick="appendNumber('0')">0</button>
+            <button class="btn-equal" onclick="calculate()">=</button>
+        </div>
+    </div>
+
+    <script>
+        let currentInput = '0';
+        const displayElement = document.getElementById('display');
+
+        function updateDisplay() {
+            displayElement.innerText = currentInput;
+        }
+
+        function appendNumber(number) {
+            if (currentInput === '0') {
+                currentInput = number;
+            } else {
+                currentInput += number;
+            }
+            updateDisplay();
+        }
+
+        function appendOperator(operator) {
+            const lastChar = currentInput.slice(-1);
+            if (['+', '-', '*', '/'].includes(lastChar)) {
+                currentInput = currentInput.slice(0, -1) + operator;
+            } else {
+                currentInput += operator;
+            }
+            updateDisplay();
+        }
+
+        function clearDisplay() {
+            currentInput = '0';
+            updateDisplay();
+        }
+
+        function deleteLast() {
+            if (currentInput.length > 1) {
+                currentInput = currentInput.slice(0, -1);
+            } else {
+                currentInput = '0';
+            }
+            updateDisplay();
+        }
+
+        function calculate() {
+            try {
+                let result = eval(currentInput);
+                if (result.toString().includes('.')) {
+                    result = parseFloat(result.toFixed(6));
+                }
+                currentInput = result.toString();
+                updateDisplay();
+            } catch (error) {
+                currentInput = "Khalad";
+                updateDisplay();
+                setTimeout(() => clearDisplay(), 1000);
+            }
+        }
+
+        document.addEventListener('keydown', (event) => {
+            const key = event.key;
+            if (/[0-9]/.test(key)) appendNumber(key);
+            if (['+', '-', '*', '/'].includes(key)) appendOperator(key);
+            if (key === 'Enter' || key === '=') calculate();
+            if (key === 'Backspace') deleteLast();
+            if (key === 'Escape') clearDisplay();
+            if (key === '.') appendNumber('.');
+        });
+    </script>
+</body>
+</html>
